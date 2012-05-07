@@ -167,7 +167,6 @@ function parseISO8601(s, ignoreTimezone) { // ignoreTimezone defaults to false
 		return null;
 	}
 	var date = new Date(m[1], 0, 1);
-	if (ignoreTimezone || !m[14]) {
 	if (ignoreTimezone || !m[13]) {
 		var check = new Date(m[1], 0, 1, 9, 0);
 		if (m[3]) {
