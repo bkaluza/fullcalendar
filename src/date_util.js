@@ -168,6 +168,7 @@ function parseISO8601(s, ignoreTimezone) { // ignoreTimezone defaults to false
 	}
 	var date = new Date(m[1], 0, 1);
 	if (ignoreTimezone || !m[14]) {
+	if (ignoreTimezone || !m[13]) {
 		var check = new Date(m[1], 0, 1, 9, 0);
 		if (m[3]) {
 			date.setMonth(m[3] - 1);
@@ -206,6 +207,11 @@ function parseISO8601(s, ignoreTimezone) { // ignoreTimezone defaults to false
 		var offset = Number(m[16]) * 60 + (m[18] ? Number(m[18]) : 0);
 		offset *= m[15] == '-' ? 1 : -1;
 		date = new Date(+date + (offset * 60 * 1000));
+		if (m[14]) {
+			var offset = Number(m[16]) * 60 + (m[18] ? Number(m[18]) : 0);
+			offset *= m[15] == '-' ? 1 : -1;
+			date = new Date(+date + (offset * 60 * 1000));
+		}
 	}
 	return date;
 }
