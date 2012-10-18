@@ -24,6 +24,7 @@
 								center: 'title',
 								right: 'resourceDay,month,agendaWeek,agendaDay'
 							},
+							defaultView: 'resourceDay',
 							editable: true,
 							resources: [
 								{
@@ -54,6 +55,15 @@
 									color: 'orange'
 								}
 							],
+							eventRender: function(event, element) {
+								if(event.type != undefined && event.type == "avaliability"){
+									addAvailBlock(event);
+									return false;
+								}
+								else{
+									return true;
+								}
+							},
 							events: [
 								{
 									title: 'All Day Event',
@@ -105,11 +115,59 @@
 									end: new Date(y, m, 29),
 									url: 'http://google.com/',
 									resourceId: 3
-								}
+								},
+								{"allDay": false, "end": "2012-10-18 11:00:00", "title": "worktime", "resourceId": 2, "start": "2012-10-18 08:00:00", "type": "avaliability", "id": 1568}, {"allDay": false, "end": "2012-10-18 17:00:00", "title": "worktime", "resourceId": 2, "start": "2012-10-18 13:00:00", "type": "avaliability", "id": 1569}, {"allDay": false, "end": "2012-10-18 19:30:00", "title": "worktime", "resourceId": 4, "start": "2012-10-18 08:00:00", "type": "avaliability", "id": 1601}, {"allDay": false, "end": "2012-10-18 12:30:00", "title": "worktime", "resourceId": 1, "start": "2012-10-18 11:00:00", "type": "avaliability", "id": 1627}, {"allDay": false, "end": "2012-10-18 19:00:00", "title": "worktime", "resourceId": 1, "start": "2012-10-18 14:00:00", "type": "avaliability", "id": 1628}
 							]
 						});
-						
-					});
+
+
+
+
+
+
+function addAvailBlock(currentRes) {
+
+var calendar = $('#calendar');
+var view = calendar.fullCalendar('getView');
+var slotHeight = view.getSlotHeight();
+var slotMins = calendar.fullCalendar('option', 'slotMinutes');
+var minTime = "00:00:00";//calendar.fullCalendar('option', 'minTime');
+var minTimeHMS = minTime.split(":"); 
+var slotTop = $('.fc-agenda-slots').offset().top - $('.fc-agenda-days').offset().top;
+
+var rs_list = $('#calendar').fullCalendar('getResources');
+var resourceMap = new Object();
+for(i = 0; i < rs_list.length; i++){
+	resourceMap[rs_list[i].id] = i;
+}
+
+    var dayColumn = $('td.fc-col'+resourceMap[currentRes.resource.id]);
+    var $availBlock = $('<div class="avail-block"></div>');
+    dayColumn.append($availBlock);
+    $availBlock.css('width', $availBlock.parent().css('width'));
+    $availBlock.css('background-color', rs_list[resourceMap[currentRes.resource.id]].color);
+
+    // Where we start the availability block
+    var dayStart = new Date(currentRes.start.getFullYear(), currentRes.start.getMonth(), currentRes.start.getDate(), minTimeHMS[0], minTimeHMS[1]);//Date.parse(currentRes.Start.toString('MM/dd/yyyy') + ' ' + minTime);
+    var startOffsetSpan = currentRes.start - dayStart;//new TimeSpan(currentRes.Start - dayStart);
+    var startOffsetMins = startOffsetSpan/60000;//startOffsetSpan.getMinutes() + (startOffsetSpan.getHours() * 60);
+    var startOffsetSlots = startOffsetMins / slotMins;
+    var startOffsetHeight = startOffsetSlots * slotHeight;
+
+    var blockSpan = currentRes.end - currentRes.start;//new TimeSpan(currentRes.End - currentRes.Start);
+    var blockMins = blockSpan/60000;//blockSpan.getMinutes() + (blockSpan.getHours() * 60);
+    var blockSlots = blockMins / slotMins;
+    var blockHeight = blockSlots * slotHeight;
+    $availBlock.css('top', slotTop + startOffsetHeight).css('height', blockHeight);
+}
+					
+});
+
+
+
+
+
+
 
 					function addRes() {
 						var newResource = 	
@@ -138,6 +196,16 @@
 						width: 900px;
 						margin: 0 auto;
 						}
+
+.fc-widget-content {
+    background-color: #808080;
+    opacity: 0.5;
+}
+
+.avail-block {
+    position: absolute;
+    background-color: green;
+}
 
 				</style>
 				</head>
