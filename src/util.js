@@ -27,8 +27,8 @@ function segCmp(a, b) {
 
 
 function segsCollide(seg1, seg2) {
-	if((seg1.event.type !== undefined && seg1.event.type == "avaliability")
-		|| (seg2.event.type !== undefined && seg2.event.type == "avaliability") 
+	if( (seg1.event.type !== undefined && seg1.event.type == "availability") || 
+		(seg2.event.type !== undefined && seg2.event.type == "availability")) 
 		return false;
 	return seg1.end > seg2.start && seg1.start < seg2.end;
 }
