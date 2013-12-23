@@ -351,10 +351,10 @@ function getSkinCss(event, opt) {
 function getSkinCssWithResource(event, resource) {
 
 	var source = event.source || {};
-	var eventColor = resource.color;
+	var eventColor = event.color || resource.color;
 	var backgroundColor = eventColor;
 	var borderColor = eventColor;
-	var textColor = resource.textColor;
+	var textColor = event.textColor || resource.textColor;
 	var statements = [];
 	if (backgroundColor) {
 		statements.push('background-color:' + backgroundColor);
